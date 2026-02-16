@@ -13,7 +13,7 @@ OpenClaw skill that delegates coding tasks to **Kimi CLI** agents in isolated gi
 # From npm (when published)
 npm install -g openclaw-cli-agent-skill
 
-# From git
+# From git (prepare script runs build on install)
 npm install -g github:quratus/openclaw_cli_agent_skill
 
 # Or clone and link
@@ -90,6 +90,13 @@ if command -v kimi-worker >/dev/null 2>&1; then
   kimi-worker cleanup --older-than 24
 fi
 ```
+
+## Known limitations
+
+- **Kimi CLI only (v1).** This release is built and tested for the **Kimi CLI** (kimi-code). It may not work with other coding CLIs out of the box. If you want to use this concept with other workers (e.g. Claude Code, OpenCode, Aider), contributions are welcome: the design can be extended with provider adapters so one skill supports multiple CLIs. See the repo for the current structure (auth, spawn, parser) and open an issue or PR to propose another provider.
+- Kimi must be installed and authenticated by the user (`kimi`, then `/login` in the REPL); the skill cannot perform login for you.
+- Timeout is a hard kill at `--timeout` minutes; there is no soft “wrap up” warning (Kimi print mode may not support stdin for that).
+- Session resumption (resume an interrupted task in the same Kimi session) is planned for a later version.
 
 ## License
 

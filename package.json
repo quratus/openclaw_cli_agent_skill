@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepare": "npm run build",
     "install-skill": "node scripts/install-skill.js",
     "test": "npm run build && node --test 'tests/unit/**/*.test.js'",
     "test:unit": "npm run build && node --test 'tests/unit/**/*.test.js'",
@@ -20,6 +21,12 @@
   },
   "keywords": ["openclaw", "kimi", "cli", "skill"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quratus/openclaw_cli_agent_skill.git"
+  },
+  "homepage": "https://github.com/quratus/openclaw_cli_agent_skill#readme",
+  "bugs": { "url": "https://github.com/quratus/openclaw_cli_agent_skill/issues" },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.19.0",

@@ -1,5 +1,7 @@
 # Contributing
 
+This project currently targets the **Kimi CLI**. Contributions to support other coding CLIs (e.g. Claude Code, OpenCode, Aider) via a provider/adapter pattern are welcome—see the auth, spawn, and parser modules for the extension points.
+
 ## Dev setup
 
 1. Clone the repo and install dependencies:
