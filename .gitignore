@@ -1,0 +1,12 @@
+node_modules/
+bin/
+*.map
+.env
+*.log
+.DS_Store
+coverage/
+*.tsbuildinfo
+bin/*.js
+bin/**/*.js
+bin/**/*.d.ts
+bin/**/*.map

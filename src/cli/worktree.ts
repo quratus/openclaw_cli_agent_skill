@@ -1,0 +1,51 @@
+import path from "node:path";
+import { getRepoPath, getWorktreeBasePath } from "../worktree/repo.js";
+import { listWorktrees } from "../worktree/list.js";
+import { removeWorktree } from "../worktree/remove.js";
+
+export async function runWorktree(args: string[]): Promise<number> {
+  const sub = args[0];
+  if (sub === "list") {
+    const cwd = process.cwd();
+    const rest = args.slice(1);
+    let repoFlag: string | undefined;
+    for (let i = 0; i < rest.length; i++) {
+      if (rest[i] === "--repo" && rest[i + 1]) {
+        repoFlag = rest[i + 1];
+        break;
+      }
+    }
+    const repoPath = getRepoPath(cwd, repoFlag);
+    const basePath = getWorktreeBasePath();
+    const worktrees = await listWorktrees(repoPath, basePath);
+    if (worktrees.length === 0) {
+      console.log("No worktrees found.");
+      return 0;
+    }
+    for (const wt of worktrees) {
+      console.log(`${wt.taskId ?? "?"}\t${wt.path}`);
+    }
+    return 0;
+  }
+
+  if (sub === "remove") {
+    const taskId = args[1];
+    if (!taskId) {
+      console.error("Usage: kimi-worker worktree remove <taskId>");
+      return 1;
+    }
+    const basePath = getWorktreeBasePath();
+    const worktreePath = path.join(basePath, taskId);
+    try {
+      await removeWorktree(worktreePath);
+      console.log(`Removed worktree: ${worktreePath}`);
+      return 0;
+    } catch (err) {
+      console.error("Remove failed:", err instanceof Error ? err.message : err);
+      return 1;
+    }
+  }
+
+  console.error("Usage: kimi-worker worktree list | remove <taskId>");
+  return 1;
+}

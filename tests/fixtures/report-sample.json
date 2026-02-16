@@ -1,0 +1,22 @@
+{
+  "protocol_version": "1.0",
+  "task_id": "test-task-123",
+  "execution": {
+    "status": "completed",
+    "duration_seconds": 120,
+    "session_id": "sess_xyz"
+  },
+  "cognitive_state": {
+    "confidence": 0.9,
+    "certainty_level": "high",
+    "blockers": [],
+    "assumptions": ["Used existing patterns"]
+  },
+  "artifacts": {
+    "files_modified": ["src/foo.ts"],
+    "files_created": ["src/bar.ts"],
+    "files_deleted": [],
+    "test_status": "passed",
+    "git_sha": "abc123"
+  }
+}
