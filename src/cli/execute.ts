@@ -97,7 +97,7 @@ export async function runExecute(args: string[]): Promise<number> {
 
   if (!prompt) {
     console.error(
-      'Usage: kimi-worker execute "<prompt>" [--output-format text|json] [--constraint "X"] [--success "Y"] [--files "path1,path2"]'
+      'Usage: cli-worker execute "<prompt>" [--output-format text|json] [--constraint "X"] [--success "Y"] [--files "path1,path2"]'
     );
     return 1;
   }
@@ -143,9 +143,17 @@ export async function runExecute(args: string[]): Promise<number> {
       parsed.successCriteria.length > 0 ? parsed.successCriteria : undefined,
   };
 
-  writeManifest(taskId, task, worktreePath, reportPath);
-  const agentsMd = generateAgentsMd(task);
-  fs.writeFileSync(path.join(worktreePath, AGENTS_MD), agentsMd, "utf-8");
+  try {
+    writeManifest(taskId, task, worktreePath, reportPath);
+    const agentsMd = generateAgentsMd(task);
+    fs.writeFileSync(path.join(worktreePath, AGENTS_MD), agentsMd, "utf-8");
+  } catch (err) {
+    console.error(
+      "Could not write task files:",
+      err instanceof Error ? err.message : err
+    );
+    return 1;
+  }
 
   const timeoutMs =
     parsed.timeoutMinutes != null
@@ -154,8 +162,10 @@ export async function runExecute(args: string[]): Promise<number> {
   const result = await runKimi(prompt, worktreePath, { timeoutMs });
 
   if (result.exitCode !== 0) {
-    if (result.stderr) console.error(result.stderr);
-    return result.exitCode ?? 1;
+    const exitCode = result.exitCode ?? 1;
+    const stderrMsg = result.stderr ? `: ${result.stderr.trim()}` : "";
+    console.error(`Kimi failed (exit ${exitCode})${stderrMsg}`);
+    return exitCode;
   }
 
   if (outputFormat === "text") {

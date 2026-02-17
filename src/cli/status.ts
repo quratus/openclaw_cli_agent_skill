@@ -5,7 +5,7 @@ import { parseReport } from "../parser/report.js";
 export async function runStatus(args: string[]): Promise<number> {
   const taskId = args[0];
   if (!taskId) {
-    console.error("Usage: kimi-worker status <taskId>");
+    console.error("Usage: cli-worker status <taskId>");
     return 1;
   }
 

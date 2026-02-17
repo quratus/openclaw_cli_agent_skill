@@ -5,7 +5,7 @@
   "type": "module",
   "main": "bin/cli/main.js",
   "bin": {
-    "kimi-worker": "bin/cli/main.js"
+    "cli-worker": "bin/cli/main.js"
   },
   "scripts": {
     "build": "tsc",

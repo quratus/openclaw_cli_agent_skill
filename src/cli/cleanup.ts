@@ -25,12 +25,19 @@ export async function runCleanup(args: string[]): Promise<number> {
 
   const basePath = getWorktreeBasePath();
   try {
-    const removed = await cleanupWorktrees(repoPath, basePath, olderThanHours);
+    const { removed, failures } = await cleanupWorktrees(
+      repoPath,
+      basePath,
+      olderThanHours
+    );
     logInfo(
       `cleanup: removed ${removed} worktree(s) older than ${olderThanHours}h`
     );
     if (removed > 0) console.log(`Removed ${removed} worktree(s).`);
-    return 0;
+    for (const failure of failures) {
+      console.error(failure);
+    }
+    return failures.length > 0 ? 1 : 0;
   } catch (err) {
     console.error("Cleanup failed:", err instanceof Error ? err.message : err);
     return 1;

@@ -19,13 +19,14 @@ export function getConfigPath(): string {
 
 export function getConfig(): OpenClawConfig {
   const configPath = getConfigPath();
-  if (!fs.existsSync(configPath)) {
-    return {};
-  }
-  const raw = fs.readFileSync(configPath, "utf-8");
   try {
+    if (!fs.existsSync(configPath)) {
+      return {};
+    }
+    const raw = fs.readFileSync(configPath, "utf-8");
     return JSON.parse(raw) as OpenClawConfig;
   } catch {
+    console.error("Config unreadable, using defaults.");
     return {};
   }
 }

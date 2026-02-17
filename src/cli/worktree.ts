@@ -17,21 +17,33 @@ export async function runWorktree(args: string[]): Promise<number> {
     }
     const repoPath = getRepoPath(cwd, repoFlag);
     const basePath = getWorktreeBasePath();
-    const worktrees = await listWorktrees(repoPath, basePath);
-    if (worktrees.length === 0) {
-      console.log("No worktrees found.");
+    try {
+      const worktrees = await listWorktrees(repoPath, basePath);
+      if (worktrees.length === 0) {
+        console.log("No worktrees found.");
+        return 0;
+      }
+      for (const wt of worktrees) {
+        console.log(`${wt.taskId ?? "?"}\t${wt.path}`);
+      }
       return 0;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("not a git repository") || msg.includes("git")) {
+        console.error(
+          "Not a git repository. Run from repo root or use --repo <path>."
+        );
+      } else {
+        console.error("Failed to list worktrees:", msg);
+      }
+      return 1;
     }
-    for (const wt of worktrees) {
-      console.log(`${wt.taskId ?? "?"}\t${wt.path}`);
-    }
-    return 0;
   }
 
   if (sub === "remove") {
     const taskId = args[1];
     if (!taskId) {
-      console.error("Usage: kimi-worker worktree remove <taskId>");
+      console.error("Usage: cli-worker worktree remove <taskId>");
       return 1;
     }
     const basePath = getWorktreeBasePath();
@@ -46,6 +58,6 @@ export async function runWorktree(args: string[]): Promise<number> {
     }
   }
 
-  console.error("Usage: kimi-worker worktree list | remove <taskId>");
+  console.error("Usage: cli-worker worktree list | remove <taskId>");
   return 1;
 }

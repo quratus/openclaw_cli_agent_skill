@@ -4,10 +4,10 @@ const args = process.argv.slice(2);
 
 function printHelp(): void {
   console.log(`
-kimi-worker - OpenClaw skill for Kimi CLI agents in isolated worktrees
+cli-worker - OpenClaw skill for Kimi CLI agents in isolated worktrees
 
 Usage:
-  kimi-worker <command> [options]
+  cli-worker <command> [options]
 
 Commands:
   execute <prompt>   Run a task with Kimi CLI
@@ -19,12 +19,12 @@ Commands:
   --help, -h         Show this help
 
 Examples:
-  kimi-worker verify
-  kimi-worker execute "Reply OK"
-  kimi-worker execute "Create hello.py" --constraint "Python 3.11"
-  kimi-worker status <taskId>
-  kimi-worker worktree list
-  kimi-worker cleanup --older-than 24
+  cli-worker verify
+  cli-worker execute "Reply OK"
+  cli-worker execute "Create hello.py" --constraint "Python 3.11"
+  cli-worker status <taskId>
+  cli-worker worktree list
+  cli-worker cleanup --older-than 24
 `);
 }
 

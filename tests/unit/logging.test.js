@@ -22,7 +22,7 @@ describe("logging", () => {
   it("writes log line with timestamp and level", async () => {
     const { log } = await import("../../bin/logging.js");
     log("INFO", "test message");
-    const logPath = path.join(logDir, "kimi-worker.log");
+    const logPath = path.join(logDir, "cli-worker.log");
     assert.ok(fs.existsSync(logPath));
     const content = fs.readFileSync(logPath, "utf-8");
     assert.ok(content.includes("[INFO]"));
@@ -30,7 +30,7 @@ describe("logging", () => {
   });
 
   it("rotates log when file exceeds 10MB", async () => {
-    const logPath = path.join(logDir, "kimi-worker.log");
+    const logPath = path.join(logDir, "cli-worker.log");
     fs.writeFileSync(logPath, "x".repeat(11 * 1024 * 1024), "utf-8"); // 11MB
     const { log } = await import("../../bin/logging.js");
     log("INFO", "after rotate");

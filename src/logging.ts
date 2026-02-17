@@ -7,7 +7,7 @@ function getLogDir(): string {
     process.env.OPENCLAW_LOG_DIR ?? path.join(os.homedir(), ".openclaw", "logs")
   );
 }
-const LOG_FILE = () => path.join(getLogDir(), "kimi-worker.log");
+const LOG_FILE = () => path.join(getLogDir(), "cli-worker.log");
 const ROTATE_THRESHOLD = 10 * 1024 * 1024; // 10MB
 
 function ensureLogDir(): void {
