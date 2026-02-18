@@ -1,6 +1,6 @@
-# openclaw-cli-agent-skill
+# openclaw CLI agent skill
 
-OpenClaw skill that delegates coding tasks to **Kimi CLI** agents in isolated git worktrees.
+OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in isolated git worktrees.
 
 ## Prerequisites
 
