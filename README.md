@@ -1,3 +1,7 @@
+
+![Generated Image February 18, 2026 - 6_33PM](https://github.com/user-attachments/assets/727f578f-00a2-4867-8d80-2374f34f557f)
+
+___________________________________
 # openclaw CLI agent skill
 
 OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in isolated git worktrees.
