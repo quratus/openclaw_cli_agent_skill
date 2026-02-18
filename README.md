@@ -4,11 +4,11 @@
 ___________________________________
 # openclaw CLI agent skill
 
-OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in isolated git worktrees.
+OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in isolated git worktrees. The CLI Agents build the code and return their results back to openclaw. 
 
 ## Prerequisites
 
-> **You must install and authenticate the CLI yourself before using this skill. This skill does not store or use any credentials.**
+> **You must have a subscription of the CLI Agent you want to use. Install and authenticate the CLI yourself before using this skill. This skill does not store or use any credentials.**
 
 - **Node.js** >= 18
 - **Kimi CLI** installed and authenticated (run `kimi` then `/login` in the REPL)
