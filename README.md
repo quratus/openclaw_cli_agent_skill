@@ -13,6 +13,8 @@ OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in 
 - **Node.js** >= 18
 - **Kimi CLI** installed and authenticated (run `kimi` then `/login` in the REPL)
 
+**CI and credentials:** This repo does not use or store any credentials. GitHub Actions runs lint, build, and unit tests only. Integration tests require a local CLI and auth; run `npm run test:integration` locally.
+
 ## Install
 
 ### Install and forget

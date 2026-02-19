@@ -1,43 +1,34 @@
 # Contributing
 
-This project currently targets the **Kimi CLI**. Contributions to support other coding CLIs (e.g. Claude Code, OpenCode, Aider) via a provider/adapter pattern are welcome—see the auth, spawn, and parser modules for the extension points.
+**No credentials.** This skill never stores or logs CLI tokens. Users install and authenticate the CLI (e.g. Kimi) on their own machine; we only verify that auth exists.
+
+Before starting, check `KNOWN_ISSUES.md`. If your change conflicts with planned multi-provider work, open an issue first.
 
 ## Dev setup
 
-1. Clone the repo and install dependencies:
+```bash
+git clone https://github.com/quratus/openclaw_cli_agent_skill.git
+cd openclaw_cli_agent_skill
+npm install && npm run build && npm run test:unit
+npm run lint
+```
 
-   ```bash
-   git clone https://github.com/quratus/openclaw_cli_agent_skill.git
-   cd openclaw_cli_agent_skill
-   npm install
-   ```
+## Tests
 
-2. Build and run unit tests:
-
-   ```bash
-   npm run build
-   npm run test:unit
-   ```
-
-3. Lint:
-
-   ```bash
-   npm run lint
-   ```
-
-## Test commands
-
-- **Unit tests** (no Kimi CLI required): `npm run test:unit`
-- **Integration tests** (require Kimi CLI installed and authenticated): `npm run test:integration`. These are skipped automatically if Kimi is not available.
+- **Unit** (no CLI): `npm run test:unit` — required for CI and PRs.
+- **Integration** (need local CLI + auth): `npm run test:integration` — run locally only; not run in GitHub Actions because we don't use or store credentials.
 
 ## Code style
 
-- TypeScript, ES modules, Node >= 18
-- ESLint + Prettier; run `npm run lint` before committing.
+TypeScript, ES modules, Node >= 18. ESLint + Prettier; run `npm run lint` before committing.
 
 ## Submitting changes
 
-1. Open an issue or pick an existing one.
-2. Branch from `main`, make changes, add/update tests.
-3. Ensure `npm run lint` and `npm run test:unit` pass.
-4. Open a PR with a short description and reference to the issue.
+1. Open an issue or pick one.
+2. Branch from `main`, change, add/update tests.
+3. `npm run lint` and `npm run test:unit` must pass.
+4. Open a PR; integration tests are optional (local only).
+
+## Provider extensions (later)
+
+Multi-provider (Claude Code, OpenCode, etc.) is planned. Extension points: `src/auth/verify.ts`, `src/spawn/run.ts`, parser. Keep auth verify-only and worktree-isolated so we can add a clean provider layer on top.

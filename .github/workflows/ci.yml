@@ -1,3 +1,5 @@
+# CI runs only steps that need no credentials. Integration tests require
+# a locally installed and authenticated CLI (user's responsibility); run them locally.
 name: CI
 
 on:
@@ -29,9 +31,3 @@ jobs:
 
       - name: Unit tests
         run: npm run test:unit
-
-      # Integration tests require Kimi CLI; skip in CI unless explicitly enabled
-      - name: Integration tests (optional)
-        run: npm run test:integration || true
-        env:
-          CI: true
