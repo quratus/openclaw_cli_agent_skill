@@ -47,4 +47,45 @@ describe("generateAgentsMd", () => {
     const out = generateAgentsMd(task);
     assert.ok(out.includes(".openclaw/kimi-reports/abc.json"));
   });
+
+  it("uses default title when not provided", async () => {
+    const task = {
+      prompt: "Task",
+      worktreePath: "/tmp/wt",
+    };
+    const out = generateAgentsMd(task);
+    assert.ok(out.includes("# OpenClaw Kimi Worker - Task Instructions"));
+  });
+
+  it("uses custom title when provided", async () => {
+    const task = {
+      prompt: "Task",
+      worktreePath: "/tmp/wt",
+    };
+    const out = generateAgentsMd(task, "Custom Worker Title");
+    assert.ok(out.includes("# Custom Worker Title"));
+    assert.ok(!out.includes("OpenClaw Kimi Worker"));
+  });
+
+  it("uses provider-specific AGENTS.md title for Claude", async () => {
+    const task = {
+      prompt: "Task",
+      worktreePath: "/tmp/wt",
+    };
+    const { claudeProvider } = await import("../../bin/providers/claude.js");
+    const out = generateAgentsMd(task, claudeProvider.agentsMdTitle());
+    assert.ok(out.includes("# OpenClaw Claude Worker - Task Instructions"));
+  });
+
+  it("uses provider-specific AGENTS.md title for OpenCode", async () => {
+    const task = {
+      prompt: "Task",
+      worktreePath: "/tmp/wt",
+    };
+    const { opencodeProvider } = await import(
+      "../../bin/providers/opencode.js"
+    );
+    const out = generateAgentsMd(task, opencodeProvider.agentsMdTitle());
+    assert.ok(out.includes("# OpenClaw OpenCode Worker - Task Instructions"));
+  });
 });

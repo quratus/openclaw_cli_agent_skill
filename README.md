@@ -6,14 +6,27 @@ ___________________________________
 
 **Website (quick start):** [cli-agent-skill.lovable.app](https://cli-agent-skill.lovable.app/#quickstart) · **Repo:** [github.com/quratus/openclaw_cli_agent_skill](https://github.com/quratus/openclaw_cli_agent_skill)
 
-OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in isolated git worktrees. The CLI Agents build the code and return their results back to openclaw. 
+OpenClaw skill that delegates coding tasks to CLI agents (Kimi, Claude Code, OpenCode) in isolated git worktrees. The CLI Agents build the code and return their results back to openclaw.
+
+## Supported Providers
+
+The skill supports multiple CLI providers:
+
+| Provider | CLI Command | Authentication |
+|----------|-------------|----------------|
+| **Kimi** (default) | `kimi` | Run `kimi` then `/login` |
+| **Claude Code** | `claude` | Set `ANTHROPIC_API_KEY` env var |
+| **OpenCode** | `opencode` | Run `opencode auth login` |
 
 ## Prerequisites
 
 > **You must have a subscription of the CLI Agent you want to use. Install and authenticate the CLI yourself before using this skill. This skill does not store or use any credentials.**
 
 - **Node.js** >= 18
-- **Kimi CLI** installed and authenticated (run `kimi` then `/login` in the REPL)
+- **At least one CLI** installed and authenticated:
+  - **Kimi:** Run `kimi` then `/login` in the REPL
+  - **Claude Code:** Install via npm and set `ANTHROPIC_API_KEY`
+  - **OpenCode:** Install and run `opencode auth login`
 
 **CI and credentials:** This repo does not use or store any credentials. GitHub Actions runs lint, build, and unit tests only. Integration tests require a local CLI and auth; run `npm run test:integration` locally.
 
@@ -59,20 +72,29 @@ This symlinks `skills/cli-worker` to `~/.openclaw/skills/cli-worker`. Restart th
 ## Quick start
 
 ```bash
-# Verify Kimi CLI is set up
+# Verify default provider (Kimi)
 cli-worker verify
+
+# Verify specific provider
+cli-worker verify --provider claude
+cli-worker verify --provider opencode
 
 # Run a simple task
 cli-worker execute "Reply OK"
+
+# Run with specific provider
+cli-worker execute "Create API" --provider claude
 ```
 
 ## Commands
 
 | Command | Description |
-|--------|-------------|
-| `cli-worker verify` | Check Kimi CLI install and auth |
+|---------|-------------|
+| `cli-worker verify` | Check CLI agent install and auth |
+| `cli-worker verify --provider <id>` | Verify specific provider (kimi, claude, opencode) |
 | `cli-worker execute "<prompt>"` | Run a task in an isolated worktree |
-| `cli-worker status <taskId>` | Show task status from report |
+| `cli-worker execute "<prompt>" --provider <id>` | Run with specific provider |
+| `cli-worker status <taskId>` | Show task status from report (add `--provider claude` or `--provider opencode` if the task used that provider) |
 | `cli-worker worktree list` | List active worktrees |
 | `cli-worker worktree remove <taskId>` | Remove a worktree |
 | `cli-worker cleanup [--older-than N]` | Remove worktrees older than N hours (default 24) |
@@ -81,6 +103,37 @@ cli-worker execute "Reply OK"
 
 - Default `json` prints only the last assistant text from the stream.
 - Use `--output-format text` to get full plain-text output (useful when the agent should consume all output).
+
+## Provider Configuration
+
+### Provider Resolution Order
+
+The skill resolves the provider in this order (first match wins):
+
+1. **`--provider <id>`** flag on the command line
+2. **`OPENCLAW_CLI_PROVIDER`** environment variable
+3. **Config file:** `openclaw.json` (`cliWorker.provider` or `skills["cli-worker"].provider`)
+4. **Default:** `kimi`
+
+### Examples
+
+```bash
+# Use --provider flag
+cli-worker execute "Create API" --provider claude
+
+# Use environment variable
+export OPENCLAW_CLI_PROVIDER=claude
+cli-worker execute "Create API"
+
+# Use config file (~/.openclaw/openclaw.json)
+{
+  "cliWorker": { "provider": "claude" }
+}
+# or
+{
+  "skills": { "cli-worker": { "provider": "claude" } }
+}
+```
 
 ## Merge and cleanup
 
@@ -99,7 +152,8 @@ Optional config file: `~/.openclaw/openclaw.json`
 
 ```json
 {
-  "worktree": { "basePath": "~/.openclaw/worktrees/kimi" }
+  "worktree": { "basePath": "~/.openclaw/worktrees" },
+  "cliWorker": { "provider": "claude" }
 }
 ```
 
@@ -109,13 +163,17 @@ Override with env: `OPENCLAW_CONFIG=/path/to/config.json`
 
 | Variable | Purpose |
 |----------|---------|
+| `OPENCLAW_CLI_PROVIDER` | Default provider: `kimi`, `claude`, or `opencode` |
 | `KIMI_CLI_PATH` | Path or name of the Kimi CLI executable (default: `kimi`). Validated; invalid values fall back to `kimi`. |
 | `KIMI_HOME` | Kimi config/credentials directory (default: `~/.kimi`). |
+| `CLAUDE_CLI_PATH` | Path or name of the Claude CLI executable (default: `claude`). Validated; invalid values fall back to `claude`. |
+| `ANTHROPIC_API_KEY` | API key for Claude Code authentication. |
+| `OPENCODE_CLI_PATH` | Path or name of the OpenCode CLI executable (default: `opencode`). Validated; invalid values fall back to `opencode`. |
 | `OPENCLAW_CONFIG` | Path to OpenClaw config JSON (default: `~/.openclaw/openclaw.json`). |
 | `OPENCLAW_LOG_DIR` | Directory for cli-worker log file (default: `~/.openclaw/logs`). |
 | `KIMI_NO_BROWSER` | Set to `1` by the skill when invoking Kimi (no override needed). |
 
-None are required. The skill only reads under `~/.kimi` (for verification) and writes under `~/.openclaw` (logs, manifests).
+None are required. The skill only reads under `~/.kimi`, `~/.local/share/opencode` (for verification) and writes under `~/.openclaw` (logs, manifests).
 
 ### OpenClaw skill registration
 
@@ -141,12 +199,35 @@ if command -v cli-worker >/dev/null 2>&1; then
 fi
 ```
 
+## Provider Details
+
+### Kimi (default)
+
+- **Command:** `kimi` (or `KIMI_CLI_PATH`)
+- **Headless:** `--print -p "<prompt>" --output-format=stream-json`
+- **Auth:** `~/.kimi/config.toml` and credentials in `~/.kimi/credentials/`
+- **Verify:** `kimi --print -p "Reply OK"`
+
+### Claude Code
+
+- **Command:** `claude` (or `CLAUDE_CLI_PATH`)
+- **Headless:** `claude -p "<prompt>" --output-format stream-json`
+- **Auth:** `ANTHROPIC_API_KEY` environment variable
+- **Verify:** `claude -p "Reply OK"`
+- **Install:** `npm install -g @anthropic-ai/claude-code`
+
+### OpenCode
+
+- **Command:** `opencode run "<prompt>"` (or `OPENCODE_CLI_PATH`)
+- **Headless:** `opencode run "<prompt>" --format json`
+- **Auth:** `~/.local/share/opencode/auth.json`
+- **Verify:** `opencode auth list`
+
 ## Known limitations
 
-- **Kimi CLI only (v1).** This release is built and tested for the **Kimi CLI** (kimi-code). It may not work with other coding CLIs out of the box. If you want to use this concept with other workers (e.g. Claude Code, OpenCode, Aider), contributions are welcome: the design can be extended with provider adapters so one skill supports multiple CLIs. See the repo for the current structure (auth, spawn, parser) and open an issue or PR to propose another provider.
-- Kimi must be installed and authenticated by the user (`kimi`, then `/login` in the REPL); the skill cannot perform login for you.
-- Timeout is a hard kill at `--timeout` minutes; there is no soft "wrap up" warning (Kimi print mode may not support stdin for that).
-- Session resumption (resume an interrupted task in the same Kimi session) is planned for a later version.
+- Kimi, Claude, and OpenCode must be installed and authenticated by the user; the skill cannot perform login for you.
+- Timeout is a hard kill at `--timeout` minutes; there is no soft "wrap up" warning (print mode may not support stdin for that).
+- Session resumption (resume an interrupted task in the same session) is planned for a later version.
 
 ## License
 
