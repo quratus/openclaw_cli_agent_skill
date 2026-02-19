@@ -66,7 +66,7 @@ After a task completes, decide whether to keep or discard the work:
 
 ## Install
 
-- **CLI (required for execute/verify):** Must be on PATH where the agent runs. From the repo: `npm install && npm run build && npm link`. (When published: `npm install -g openclaw-cli-agent-skill`.) If the agent gets "command not found", run `npm link` from the repo and restart the gateway.
+- **CLI (required for execute/verify):** Must be on PATH where the agent runs. From the repo: `npm install && npm run build && npm link`. (From npm: `npm install -g @sqncr/openclaw-cli-agent-skill`.) If the agent gets "command not found", run `npm link` from the repo and restart the gateway.
 - **Skill discovery:** From the repo run `npm run install-skill` to symlink into `~/.openclaw/skills/cli-worker`. Restart gateway or new session after that.
 
 ## OpenClaw integration

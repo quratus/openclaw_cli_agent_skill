@@ -21,8 +21,8 @@ OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in 
 
 1. **Install the CLI:**
    ```bash
-   # From npm (when published)
-   npm install -g openclaw-cli-agent-skill
+   # From npm (recommended)
+   npm install -g @sqncr/openclaw-cli-agent-skill
    
    # Or from git
    npm install -g github:quratus/openclaw_cli_agent_skill

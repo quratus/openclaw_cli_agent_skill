@@ -1,5 +1,5 @@
 {
-  "name": "openclaw-cli-agent-skill",
+  "name": "@sqncr/openclaw-cli-agent-skill",
   "version": "0.1.0",
   "description": "OpenClaw skill that delegates coding tasks to Kimi CLI agents in isolated git worktrees",
   "type": "module",
@@ -7,6 +7,7 @@
   "bin": {
     "cli-worker": "bin/cli/main.js"
   },
+  "files": ["bin", "skills", "scripts"],
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
@@ -23,10 +24,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/quratus/openclaw_cli_agent_skill.git"
+    "url": "git+https://github.com/quratus/openclaw_cli_agent_skill.git"
   },
   "homepage": "https://github.com/quratus/openclaw_cli_agent_skill#readme",
   "bugs": { "url": "https://github.com/quratus/openclaw_cli_agent_skill/issues" },
+  "publishConfig": { "access": "public" },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
