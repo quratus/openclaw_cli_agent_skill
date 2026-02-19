@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2026-02-19
+
+### Security
+
+- **Path traversal:** `taskId` for `cli-worker status` and `cli-worker worktree remove` is validated: only alphanumeric and hyphens allowed; resolved path must stay under worktree base. Prevents arbitrary file read and worktree remove in arbitrary directories (ClawHub path traversal finding).
+- **SECURITY.md** updated with path traversal section.
+
+### Added
+
+- `src/safe-task-id.ts`: `isSafeTaskId()`, `resolveTaskIdPath()` for safe taskId handling.
+- Unit tests in `tests/unit/safe-task-id.test.js`.
+
 ## [0.2.1] - 2026-02-19
 
 ### Security

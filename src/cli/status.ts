@@ -1,6 +1,7 @@
 import path from "node:path";
 import { getWorktreeBasePath } from "../worktree/repo.js";
 import { parseReport } from "../parser/report.js";
+import { resolveTaskIdPath } from "../safe-task-id.js";
 
 export async function runStatus(args: string[]): Promise<number> {
   const taskId = args[0];
@@ -10,9 +11,13 @@ export async function runStatus(args: string[]): Promise<number> {
   }
 
   const basePath = getWorktreeBasePath();
+  const worktreeDir = resolveTaskIdPath(basePath, taskId);
+  if (!worktreeDir) {
+    console.error("Invalid taskId: must be alphanumeric and hyphens only (no path traversal).");
+    return 1;
+  }
   const reportPath = path.join(
-    basePath,
-    taskId,
+    worktreeDir,
     ".openclaw",
     "kimi-reports",
     `${taskId}.json`

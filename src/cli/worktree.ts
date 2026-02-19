@@ -1,7 +1,7 @@
-import path from "node:path";
 import { getRepoPath, getWorktreeBasePath } from "../worktree/repo.js";
 import { listWorktrees } from "../worktree/list.js";
 import { removeWorktree } from "../worktree/remove.js";
+import { resolveTaskIdPath } from "../safe-task-id.js";
 
 export async function runWorktree(args: string[]): Promise<number> {
   const sub = args[0];
@@ -47,7 +47,11 @@ export async function runWorktree(args: string[]): Promise<number> {
       return 1;
     }
     const basePath = getWorktreeBasePath();
-    const worktreePath = path.join(basePath, taskId);
+    const worktreePath = resolveTaskIdPath(basePath, taskId);
+    if (!worktreePath) {
+      console.error("Invalid taskId: must be alphanumeric and hyphens only (no path traversal).");
+      return 1;
+    }
     try {
       await removeWorktree(worktreePath);
       console.log(`Removed worktree: ${worktreePath}`);

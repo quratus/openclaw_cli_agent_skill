@@ -10,6 +10,15 @@ The skill runs the Kimi CLI via Node.js `child_process.spawn()`, **not** a shell
   - Other C0 control characters (except tab, newline, carriage return) are replaced with spaces to avoid control sequences that could confuse downstream parsers.
 - **Trust boundary:** The skill does not store or log credentials. It only verifies that the user has already authenticated the Kimi CLI; the CLI runs with the user’s privileges in the configured worktree.
 
+## Path traversal (taskId)
+
+The `taskId` argument for `cli-worker status <taskId>` and `cli-worker worktree remove <taskId>` is validated before use:
+
+- **Allowed:** Single segment only: alphanumeric and hyphens (e.g. UUIDs like `550e8400-e29b-41d4-a716-446655440000`). No path separators (`/`, `\`), no `..`, no leading hyphen.
+- **Resolution:** Paths are resolved with `path.resolve(basePath, taskId)` and checked to remain under `basePath` before reading files or running `git worktree remove`. Invalid `taskId` is rejected with an error.
+
+This prevents arbitrary file read (e.g. `status ../../../../etc/passwd`) and destructive worktree remove in arbitrary directories.
+
 ## RCE / argument injection
 
 The ClawHub finding concerns possible RCE if the Kimi CLI were susceptible to argument or command injection. On the skill side:
