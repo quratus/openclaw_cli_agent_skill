@@ -4,6 +4,8 @@
 ___________________________________
 # openclaw CLI agent skill
 
+**Website (quick start):** [cli-agent-skill.lovable.app](https://cli-agent-skill.lovable.app/#quickstart) · **Repo:** [github.com/quratus/openclaw_cli_agent_skill](https://github.com/quratus/openclaw_cli_agent_skill)
+
 OpenClaw skill that delegates coding tasks to for now to **Kimi CLI** agents in isolated git worktrees. The CLI Agents build the code and return their results back to openclaw. 
 
 ## Prerequisites
