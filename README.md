@@ -105,6 +105,18 @@ Optional config file: `~/.openclaw/openclaw.json`
 
 Override with env: `OPENCLAW_CONFIG=/path/to/config.json`
 
+### Environment variables (all optional)
+
+| Variable | Purpose |
+|----------|---------|
+| `KIMI_CLI_PATH` | Path or name of the Kimi CLI executable (default: `kimi`). Validated; invalid values fall back to `kimi`. |
+| `KIMI_HOME` | Kimi config/credentials directory (default: `~/.kimi`). |
+| `OPENCLAW_CONFIG` | Path to OpenClaw config JSON (default: `~/.openclaw/openclaw.json`). |
+| `OPENCLAW_LOG_DIR` | Directory for cli-worker log file (default: `~/.openclaw/logs`). |
+| `KIMI_NO_BROWSER` | Set to `1` by the skill when invoking Kimi (no override needed). |
+
+None are required. The skill only reads under `~/.kimi` (for verification) and writes under `~/.openclaw` (logs, manifests).
+
 ### OpenClaw skill registration
 
 **Recommended:** run `npm run install-skill` from this repo to symlink the skill into `~/.openclaw/skills/cli-worker`. OpenClaw loads skills from that directory automatically; no config change needed.
