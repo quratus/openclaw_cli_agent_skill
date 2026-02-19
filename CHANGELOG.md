@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-02-19
+
+### Security
+
+- **Prompt sanitization:** User prompt is sanitized before being passed to the Kimi CLI: null bytes are stripped and C0 control characters (except tab, newline, CR) are replaced with spaces. This is defense-in-depth; the skill already uses `child_process.spawn()` with an argument array (no shell), so the prompt is a single argv.
+- **SECURITY.md** added: documents no-shell invocation and sanitization for ClawHub/audit.
+
+### Added
+
+- Unit tests for `sanitizePrompt` in `tests/unit/spawn-run.test.js`.
+
 ## [0.1.0] - 2026-02-16
 
 ### Added

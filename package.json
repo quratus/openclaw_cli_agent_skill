@@ -1,13 +1,13 @@
 {
   "name": "@sqncr/openclaw-cli-agent-skill",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "OpenClaw skill that delegates coding tasks to Kimi CLI agents in isolated git worktrees",
   "type": "module",
   "main": "bin/cli/main.js",
   "bin": {
     "cli-worker": "bin/cli/main.js"
   },
-  "files": ["bin", "skills", "scripts"],
+  "files": ["bin", "skills", "scripts", "SECURITY.md"],
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",

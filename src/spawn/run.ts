@@ -13,17 +13,33 @@ export interface RunOptions {
 }
 
 /**
+ * Sanitize prompt before passing to subprocess. Prevents argument injection.
+ * - Strips null bytes (can truncate argv).
+ * - Replaces other C0 control chars (except tab, newline, CR) with space so
+ *   downstream cannot be confused by control sequences.
+ * We use spawn() with an array of args (no shell), so the prompt is a single
+ * argument; this is defense-in-depth. Exported for tests.
+ */
+export function sanitizePrompt(prompt: string): string {
+  return prompt
+    .replace(/\0/g, "")
+    .replace(/[\x01-\x08\x0b\x0c\x0e-\x1f]/g, " ");
+}
+
+/**
  * Run Kimi CLI with prompt, capture stdout line-by-line.
- * Uses: kimi --print -p "<prompt>" --output-format=stream-json
+ * Uses spawn() with an argument array (no shell) so the prompt is passed as
+ * a single argv; prompt is sanitized to remove null bytes and control chars.
  */
 export function runKimi(
   prompt: string,
   cwd: string,
   options: RunOptions = {}
 ): Promise<RunResult> {
+  const safePrompt = sanitizePrompt(prompt);
   return new Promise((resolve, reject) => {
     const kimiCmd = process.env.KIMI_CLI_PATH ?? "kimi";
-    const args = ["--print", "-p", prompt, "--output-format=stream-json"];
+    const args = ["--print", "-p", safePrompt, "--output-format=stream-json"];
     const child = spawn(kimiCmd, args, {
       cwd,
       env: { ...process.env, KIMI_NO_BROWSER: "1" },
